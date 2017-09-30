@@ -12,5 +12,5 @@ let ToDoItemView = Backbone.View.extend({
 
 let ToDoList = Backbone.View.extend({
 
-});
+}); 
 
