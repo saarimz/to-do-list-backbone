@@ -1,10 +1,4 @@
 $(document).ready(function(){
-    
-    let data = [
-        { id: 1, name: "Eat apples"},
-        { id: 2, name: "Drink water"},
-        { id: 3, name: "Get groceries"}
-    ];
 
     let ToDoItem = Backbone.Model.extend({
         idAttribute: 'id',
@@ -98,21 +92,38 @@ $(document).ready(function(){
         events: {
             'click #add-button' : 'onClickAdd',
             'click #clear-button' : 'onClickClear',
+            'keyup #list-input' : 'onKeyUp'
+        },
+
+        initialize: function(){
+            $("#add-button").prop('disabled', true);
+            $("#clear-button").prop('disabled', true);
+            this.model.on("change reset add remove",this.itemIsPresent, this);
+        },
+
+        itemIsPresent: function(){
+            (this.model.length) ? ($("#clear-button").prop('disabled', false)) : ($("#clear-button").prop('disabled', true));
         },
 
         onClickAdd: function(e){
             e.preventDefault();
             let input = $("#list-input");
-            this.model.add(new ToDoItem({name: input.val()}));
-            input.val("");
+            if (input.val()) {
+                this.model.add(new ToDoItem({name: input.val()}));
+                input.val("");
+                $("#add-button").prop('disabled', true);
+            }
+        },
+
+        onKeyUp: function(){
+            let input = $("#list-input");
+            (input.val().length) ? ($("#add-button").prop('disabled', false)) : ($("#add-button").prop('disabled', true));
         },
 
         onClickClear: function(e){
             e.preventDefault();
             this.model.reset();
         }
-
-
     });
 
 
@@ -120,6 +131,8 @@ $(document).ready(function(){
 
         start: function(){
             //instantiate
+            let data = [];
+
             let toDoItems = new ToDoItems(data.map(function(item){
                 return new ToDoItem(item);
             }));
