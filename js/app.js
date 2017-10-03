@@ -72,16 +72,13 @@ $(document).ready(function(){
         el: ".main-list",
 
         initialize: function(){
-        this.model.on("remove", this.removeItem, this);
-        this.model.on("add",this.addItem, this);
+            this.model.on("remove", this.removeItem, this);
+            this.model.on("add",this.render, this);
+            this.model.on("reset",this.render, this)
         },
 
         removeItem: function(item){
             this.$("li#"+item.id).remove();
-        },
-
-        addItem: function(item){
-            this.render();
         },
 
         render: function(){
@@ -95,28 +92,44 @@ $(document).ready(function(){
         }
     }); 
 
+    let InputView = Backbone.View.extend({
+        el: ".input-view",
 
-    //instantiate
-    let toDoItems = new ToDoItems(data.map(function(item){
-        return new ToDoItem(item);
-    }));
+        events: {
+            'click #add-button' : 'onClickAdd',
+            'click #clear-button' : 'onClickClear',
+        },
 
-    let toDoList = new ToDoList({model: toDoItems});
-    toDoList.render();
+        onClickAdd: function(e){
+            e.preventDefault();
+            let input = $("#list-input");
+            this.model.add(new ToDoItem({name: input.val()}));
+            input.val("");
+        },
 
-    //TO DO: Convert this to backbone.js from jquery
-    $("#add-button").click(function(e){
-        e.preventDefault();
-        let input = $("#list-input").val();
-        toDoItems.add(new ToDoItem({name: input}));
-        $("#list-input").val("");
+        onClickClear: function(e){
+            e.preventDefault();
+            this.model.reset();
+        }
+
+
     });
 
-    //TO DO: Convert this to backbone.js from jquery
-    $("#clear-button").click(function(e){
-        e.preventDefault();
-        $(".main-list").html("")
-        toDoItems.reset();
-    });
+
+    let app = {
+
+        start: function(){
+            //instantiate
+            let toDoItems = new ToDoItems(data.map(function(item){
+                return new ToDoItem(item);
+            }));
+
+            let toDoList = new ToDoList({model: toDoItems});
+            let inputView = new InputView({ model: toDoItems});
+            toDoList.render();
+        }
+    }
+
+    app.start();
 
 });
