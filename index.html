@@ -11,6 +11,7 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
         <link rel="stylesheet" type="text/css" href="css/styles.css">
     </head>
     <body>
@@ -58,9 +59,9 @@
             <div class="list-text">
                 <div class="text-part">
                         <p class="list-comp" id="item-name"><%= name %></p>
-                        <p class="list-comp" id="timestamp"><%= timestamp %></p>
+                        <p class="list-comp" id="timestamp"><%= timestamp.toLocaleString() %></p>
                 </div>
-                <button class="text-part delete-button"><i class="fa fa-minus"></i></button>
+                <i class="fa fa-minus text-part delete-button"></i>
             </div>
         </script>
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script> 
