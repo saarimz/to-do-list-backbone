@@ -1,4 +1,4 @@
-# to-do-list-ko
+# to-do-list-backbone
 A Simple, (Mostly) Responsive To-Do list app in Backbone.js and JQuery.
 
 ## Introduction
