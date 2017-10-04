@@ -69,7 +69,7 @@ $(document).ready(function(){
             this.model.on("remove", this.removeItem, this);
             this.model.on("add",this.render, this);
             this.model.on("reset",this.render, this);
-            this.model.on("")
+            this.model.on("all",this.alertClearButton,this);
 
             this.bus = options.bus;
             this.bus.on("addItem",this.addItem,this);
@@ -86,6 +86,10 @@ $(document).ready(function(){
 
         removeItem: function(item){
             this.$("li#"+item.id).remove();
+        },
+
+        alertClearButton: function(){
+            this.bus.trigger("listAction", this.model.length);
         },
 
         render: function(){
@@ -111,14 +115,13 @@ $(document).ready(function(){
         initialize: function(options){
             $("#add-button").prop('disabled', true);
             $("#clear-button").prop('disabled', true);
-            this.model.on("change reset add remove",this.itemIsPresent, this);
             
             this.bus = options.bus;
+            this.bus.on("listAction",this.itemIsPresent,this);
         },
 
-        //TO DO - REFACTOR THIS PART
-        itemIsPresent: function(){
-            (this.model.length) ? ($("#clear-button").prop('disabled', false)) : ($("#clear-button").prop('disabled', true));
+        itemIsPresent: function(modelLength){
+            (modelLength) ? ($("#clear-button").prop('disabled', false)) : ($("#clear-button").prop('disabled', true));
         },
 
         onClickAdd: function(e){
@@ -156,7 +159,7 @@ $(document).ready(function(){
             let bus = _.extend({},Backbone.Events);
             let toDoList = new ToDoList({model: toDoItems, bus: bus});
             //TO DO: REMOVE MODEL REFERENCE IN INPUTVIEW
-            let inputView = new InputView({ model: toDoItems, bus: bus});
+            let inputView = new InputView({ bus: bus});
             toDoList.render();
         }
     }
