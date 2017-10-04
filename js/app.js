@@ -65,10 +65,23 @@ $(document).ready(function(){
 
         el: ".main-list",
 
-        initialize: function(){
+        initialize: function(options){
             this.model.on("remove", this.removeItem, this);
             this.model.on("add",this.render, this);
-            this.model.on("reset",this.render, this)
+            this.model.on("reset",this.render, this);
+            this.model.on("")
+
+            this.bus = options.bus;
+            this.bus.on("addItem",this.addItem,this);
+            this.bus.on("clearList",this.clearList,this);
+        },
+
+        addItem: function(params) {
+            this.model.add(new ToDoItem(params));
+        },
+
+        clearList: function(){
+            this.model.reset();
         },
 
         removeItem: function(item){
@@ -95,12 +108,15 @@ $(document).ready(function(){
             'keyup #list-input' : 'onKeyUp'
         },
 
-        initialize: function(){
+        initialize: function(options){
             $("#add-button").prop('disabled', true);
             $("#clear-button").prop('disabled', true);
             this.model.on("change reset add remove",this.itemIsPresent, this);
+            
+            this.bus = options.bus;
         },
 
+        //TO DO - REFACTOR THIS PART
         itemIsPresent: function(){
             (this.model.length) ? ($("#clear-button").prop('disabled', false)) : ($("#clear-button").prop('disabled', true));
         },
@@ -109,7 +125,7 @@ $(document).ready(function(){
             e.preventDefault();
             let input = $("#list-input");
             if (input.val()) {
-                this.model.add(new ToDoItem({name: input.val()}));
+                this.bus.trigger("addItem",{name: input.val()});
                 input.val("");
                 $("#add-button").prop('disabled', true);
             }
@@ -122,7 +138,7 @@ $(document).ready(function(){
 
         onClickClear: function(e){
             e.preventDefault();
-            this.model.reset();
+            this.bus.trigger("clearList");
         }
     });
 
@@ -137,8 +153,10 @@ $(document).ready(function(){
                 return new ToDoItem(item);
             }));
 
-            let toDoList = new ToDoList({model: toDoItems});
-            let inputView = new InputView({ model: toDoItems});
+            let bus = _.extend({},Backbone.Events);
+            let toDoList = new ToDoList({model: toDoItems, bus: bus});
+            //TO DO: REMOVE MODEL REFERENCE IN INPUTVIEW
+            let inputView = new InputView({ model: toDoItems, bus: bus});
             toDoList.render();
         }
     }
